@@ -26,6 +26,8 @@ syn region  hjsonString oneline matchgroup=hjsonQuote start=/"/  skip=/\\\\\|\\"
 " multiline:
 syn match  hjsonMLStringMatch /'''\([\r\n]\|.\)\{-}'''/ contains=hjsonMLString
 syn region  hjsonMLString matchgroup=hjsonQuote start=/'''/ end=/'''/ contained
+" quoteless:
+" currently not defined, not sure they can be implemented with this syntax
 
 " Syntax: JSON Keywords
 " Separated into a match and region because a region by itself is always greedy
@@ -40,7 +42,7 @@ syn match   hjsonEscape    "\\["\\/bfnrt]" contained
 syn match   hjsonEscape    "\\u\x\{4}" contained
 
 " Syntax: Numbers
-syn match   hjsonNumber    "-\=\<\%(0\|[1-9]\d*\)\%(\.\d\+\)\=\%([eE][-+]\=\d\+\)\=\>\ze[[:blank:]\r\n]*[,}\]]"
+syn match   hjsonNumber    "-\=\<\%(0\|[1-9]\d*\)\%(\.\d\+\)\=\%([eE][-+]\=\d\+\)\=\>\ze[[:blank:]\r\n,}\]]"
 
 " Syntax: Boolean
 syn match  hjsonBoolean /\(true\|false\)\(\_s\+\ze"\)\@!/
