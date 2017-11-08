@@ -23,6 +23,8 @@ syn region  hjsonComment       start="/\*" end="\*/"
 " Separated into a match and region because a region by itself is always greedy
 syn match  hjsonStringMatch /"\([^"]\|\\\"\)\+"\ze[[:blank:]\r\n,}\]]/ contains=hjsonString
 syn region  hjsonString oneline matchgroup=hjsonQuote start=/"/  skip=/\\\\\|\\"/  end=/"/ contains=hjsonEscape contained
+syn match  hjsonStringMatchSQ /'\([^']\|\\\'\)\+'\ze[[:blank:]\r\n,}\]]/ contains=hjsonStringSQ
+syn region  hjsonStringSQ oneline matchgroup=hjsonQuote start=/'/  skip=/\\\\\|\\'/  end=/'/ contains=hjsonEscape contained
 " multiline:
 syn match  hjsonMLStringMatch /'''\([\r\n]\|.\)\{-}'''/ contains=hjsonMLString
 syn region  hjsonMLString matchgroup=hjsonQuote start=/'''/ end=/'''/ contained
@@ -31,11 +33,13 @@ syn region  hjsonMLString matchgroup=hjsonQuote start=/'''/ end=/'''/ contained
 
 " Syntax: JSON Keywords
 " Separated into a match and region because a region by itself is always greedy
-syn match  hjsonKeywordMatch /"\([^"]\|\\\"\)\+"[[:blank:]\r\n]*\:/ contains=hjsonKeyword
-syn region  hjsonKeyword matchgroup=hjsonKeyword start=/"/  end=/"\ze[[:blank:]\r\n]*\:/ contained
+syn match  hjsonKeywordMatchQ /"\([^"]\|\\\"\)\+"[[:blank:]\r\n]*\:/ contains=hjsonKeywordQ
+syn region  hjsonKeywordQ matchgroup=hjsonKeyword start=/"/  end=/"\ze[[:blank:]\r\n]*\:/ contained
+syn match  hjsonKeywordMatchSQ /'\([^']\|\\\'\)\+'[[:blank:]\r\n]*\:/ contains=hjsonKeywordSQ
+syn region  hjsonKeywordSQ matchgroup=hjsonKeyword start=/'/  end=/'\ze[[:blank:]\r\n]*\:/ contained
 " without quotes
-syn match  hjsonKeywordMatch2 /[^][,:{}[:blank:]]\+\:/ contains=hjsonKeyword2
-syn region  hjsonKeyword2 matchgroup=hjsonKeyword2 start=//  end=/\ze\:/ contained
+syn match  hjsonKeywordMatch /[^][",:{}[:blank:]]\+\:/ contains=hjsonKeyword
+syn region  hjsonKeyword matchgroup=hjsonKeyword start=//  end=/\ze\:/ contained
 
 " Syntax: Escape sequences
 syn match   hjsonEscape    "\\["\\/bfnrt]" contained
@@ -66,7 +70,6 @@ hi def link hjsonBraces          Delimiter
 hi def link hjsonNull            Function
 hi def link hjsonBoolean         Boolean
 hi def link hjsonKeyword         Label
-hi def link hjsonKeyword2        Label
 hi def link hjsonQuote           Character "Quote
 hi def link hjsonNoise           Noise
 
