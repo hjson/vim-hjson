@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language: Hjson
 " Maintainer: Christian Zangl
-" Version: 0.1
+" Version: 1.0
 " Acknowledgement: Based off of vim/runtime/syntax/json.vim
 
 if !exists("main_syntax")
@@ -12,7 +12,10 @@ if !exists("main_syntax")
   let main_syntax = 'hjson'
 endif
 
-syn match   hjsonNoise           /\%(:\|,\)/
+" quoteless Strings (has least priority)
+syn match   hjsonStringUQ      /[^ \t].*$/
+
+syn match   hjsonNoise         /\%(:\|,\)/
 
 " Syntax: Comments
 syn match   hjsonLineComment   "\/\/.*"
@@ -21,55 +24,57 @@ syn region  hjsonComment       start="/\*" end="\*/"
 
 " Syntax: Strings
 " Separated into a match and region because a region by itself is always greedy
-syn match  hjsonStringMatch /"\([^"]\|\\\"\)\+"\ze[[:blank:]\r\n,}\]]/ contains=hjsonString
+syn match   hjsonStringMatch /"\([^"]\|\\\"\)\+"\ze[[:blank:]\r\n,}\]#\/]/ contains=hjsonString
 syn region  hjsonString oneline matchgroup=hjsonQuote start=/"/  skip=/\\\\\|\\"/  end=/"/ contains=hjsonEscape contained
-syn match  hjsonStringMatchSQ /'\([^']\|\\\'\)\+'\ze[[:blank:]\r\n,}\]]/ contains=hjsonStringSQ
+syn match   hjsonStringMatchSQ /'\([^']\|\\\'\)\+'\ze[[:blank:]\r\n,}\]#\/]/ contains=hjsonStringSQ
 syn region  hjsonStringSQ oneline matchgroup=hjsonQuote start=/'/  skip=/\\\\\|\\'/  end=/'/ contains=hjsonEscape contained
 " multiline:
-syn match  hjsonMLStringMatch /'''\([\r\n]\|.\)\{-}'''/ contains=hjsonMLString
-syn region  hjsonMLString matchgroup=hjsonQuote start=/'''/ end=/'''/ contained
-" quoteless:
-" currently not defined, not sure they can be implemented with this syntax
-
-" Syntax: JSON Keywords
-" Separated into a match and region because a region by itself is always greedy
-syn match  hjsonKeywordMatchQ /"\([^"]\|\\\"\)\+"[[:blank:]\r\n]*\:/ contains=hjsonKeywordQ
-syn region  hjsonKeywordQ matchgroup=hjsonKeyword start=/"/  end=/"\ze[[:blank:]\r\n]*\:/ contained
-syn match  hjsonKeywordMatchSQ /'\([^']\|\\\'\)\+'[[:blank:]\r\n]*\:/ contains=hjsonKeywordSQ
-syn region  hjsonKeywordSQ matchgroup=hjsonKeyword start=/'/  end=/'\ze[[:blank:]\r\n]*\:/ contained
-" without quotes
-syn match  hjsonKeywordMatch /[^][",:{}[:blank:]]\+\:/ contains=hjsonKeyword
-syn region  hjsonKeyword matchgroup=hjsonKeyword start=//  end=/\ze\:/ contained
-
-" Syntax: Escape sequences
-syn match   hjsonEscape    "\\["\\/bfnrt]" contained
-syn match   hjsonEscape    "\\u\x\{4}" contained
+syn match   hjsonStringMatchML /'''\([\r\n]\|.\)\{-}'''/ contains=hjsonStringML
+syn region  hjsonStringML matchgroup=hjsonQuote start=/'''/ end=/'''/ contained
 
 " Syntax: Numbers
 syn match   hjsonNumber    "-\=\<\%(0\|[1-9]\d*\)\%(\.\d\+\)\=\%([eE][-+]\=\d\+\)\=\>\ze[[:blank:]\r\n,}\]]"
 
 " Syntax: Boolean
-syn match  hjsonBoolean /\(true\|false\)\(\_s\+\ze"\)\@!/
+syn match   hjsonBoolean   /\(true\|false\)\ze\_s*[\]}#\/,\r\n]/
 
 " Syntax: Null
-syn keyword  hjsonNull      null
+syn match   hjsonNull      /null\ze\_s*[\]}#\/,\r\n]/
 
-" Syntax: Braces
+" Syntax: JSON Object Keywords
+" Separated into a match and region because a region by itself is always greedy
+syn match   hjsonKeywordMatchQ /"\([^"]\|\\\"\)\+"[[:blank:]\r\n]*\:/ contains=hjsonKeywordQ
+syn region  hjsonKeywordQ matchgroup=hjsonQuote start=/"/  end=/"\ze[[:blank:]\r\n]*\:/ contained
+syn match   hjsonKeywordMatchSQ /'\([^']\|\\\'\)\+'[[:blank:]\r\n]*\:/ contains=hjsonKeywordSQ
+syn region  hjsonKeywordSQ matchgroup=hjsonQuote start=/'/  end=/'\ze[[:blank:]\r\n]*\:/ contained
+" without quotes
+syn match   hjsonKeywordMatch /[^][",:{}[:blank:]]\+\:/ contains=hjsonKeyword
+syn region  hjsonKeyword matchgroup=hjsonQuote start=//  end=/\ze\:/ contained
+
+" Syntax: Escape sequences
+syn match   hjsonEscape    "\\["'\\/bfnrt]" contained
+syn match   hjsonEscape    "\\u\x\{4}" contained
+
+" Syntax: Array/Object Braces
 syn region  hjsonFold matchgroup=hjsonBraces start="{" end=/}\(\_s\+\ze\("\|{\)\)\@!/ transparent fold
 syn region  hjsonFold matchgroup=hjsonBraces start="\[" end=/]\(\_s\+\ze"\)\@!/ transparent fold
 
 " Define the default highlighting.
-" Only when an item doesn't have highlighting yet
 hi def link hjsonComment         Comment
-hi def link hjsonLineComment     Comment
-hi def link hjsonLineComment2    Comment
-"hi def link hjsonString          String
+hi def link hjsonLineComment     hjsonComment
+hi def link hjsonLineComment2    hjsonComment
+hi def link hjsonString          String
+hi def link hjsonStringSQ        hjsonString
+hi def link hjsonStringML        hjsonString
+hi def link hjsonStringUQ        hjsonString
 hi def link hjsonEscape          Character "Special
 hi def link hjsonNumber          Number
 hi def link hjsonBraces          Delimiter
 hi def link hjsonNull            Function
 hi def link hjsonBoolean         Boolean
 hi def link hjsonKeyword         Label
+hi def link hjsonKeywordQ        hjsonKeyword
+hi def link hjsonKeywordSQ       hjsonKeyword
 hi def link hjsonQuote           Character "Quote
 hi def link hjsonNoise           Noise
 
