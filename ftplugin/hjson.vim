@@ -1,2 +1,2 @@
 setlocal commentstring=#\ %s
-setlocal comments=:#
+setlocal comments=:#,://,s1:/*,m:*,ex:*/
