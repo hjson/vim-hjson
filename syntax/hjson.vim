@@ -42,9 +42,9 @@ syn match   hjsonNull      /null\ze\s*\($\|[\]}#,]\|\/\/\|\/\*\)/
 syn match   hjsonKeywordMatch /\(:\_s*\)\@<![^,:[\]{}[:blank:]]\+\_s*:/ contains=hjsonKeyword
 syn region  hjsonKeyword matchgroup=hjsonQuote start=//  end=/\ze\_s*:/ contained
 " with quotes
-syn match   hjsonKeywordMatchQ /"\([^"]\|\\\"\)\+"\_s*:/ contains=hjsonKeywordQ,hjsonEscape
+syn match   hjsonKeywordMatchQ /\(:\_s*\)\@<!"\([^"]\|\\\"\)\+"\_s*:/ contains=hjsonKeywordQ,hjsonEscape
 syn region  hjsonKeywordQ matchgroup=hjsonQuote start=/"/  end=/"\ze\_s*:/ contains=hjsonEscape contained
-syn match   hjsonKeywordMatchSQ /'\([^']\|\\\'\)\+'\_s*:/ contains=hjsonKeywordSQ,hjsonEscape
+syn match   hjsonKeywordMatchSQ /\(:\_s*\)\@<!'\([^']\|\\\'\)\+'\_s*:/ contains=hjsonKeywordSQ,hjsonEscape
 syn region  hjsonKeywordSQ matchgroup=hjsonQuote start=/'/  end=/'\ze\_s*:/ contains=hjsonEscape contained
 
 " Syntax: Escape sequences
