@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language: Hjson
 " Maintainer: Christian Zangl
-" Version: 1.0
+" Version: 1.1
 " Acknowledgement: Based off of vim/runtime/syntax/json.vim
 
 if !exists("main_syntax")
@@ -11,6 +11,8 @@ if !exists("main_syntax")
   endif
   let main_syntax = 'hjson'
 endif
+
+syn sync minlines=1000
 
 " quoteless Strings (has least priority)
 syn match   hjsonStringUQ      /[^ \t,:[\]{}].*$/
@@ -52,8 +54,8 @@ syn match   hjsonEscape    "\\["'\\/bfnrt]" contained
 syn match   hjsonEscape    "\\u\x\{4}" contained
 
 " Syntax: Array/Object Braces
-syn region  hjsonFold matchgroup=hjsonBraces start="{" end=/}\(\_s\+\ze\("\|{\)\)\@!/ transparent fold
-syn region  hjsonFold matchgroup=hjsonBraces start="\[" end=/]\(\_s\+\ze"\)\@!/ transparent fold
+syn region  hjsonFold matchgroup=hjsonBraces start="{" end="}" contains=TOP transparent fold
+syn region  hjsonFold matchgroup=hjsonBraces start="\[" end="]" contains=TOP,hjsonKeywordMatch,hjsonKeywordMatchQ,hjsonKeywordMatchSQ transparent fold
 
 " Syntax: Comments
 syn match   hjsonLineComment   "\/\/.*"
